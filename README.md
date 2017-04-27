@@ -63,6 +63,8 @@ It is used only these eight colors:
 
 Size of the box is strictly set up as `64 x 64` px at `1920 x 1080` px resolution.
 
+This is a sample [logfile](https://github.com/neuropacabra/LuckVogel/raw/doc/Sample%20logfile.xlsx)
+
 ### Response collection
 It is collected only mouse pressed coded as `LMB = 1` and `RMB = 3` in the way of correctness in logfile which is automaticaly generated.
 
