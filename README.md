@@ -2,6 +2,9 @@
 
 *Short-term memory storage can be divided into separate subsystems for verbal information and visual information, and recent studies have begun to delineate the neural substrates of these working-memory systems. Although the verbal storage system has been well characterized, the storage capacity of visual working memory has not yet been established for simple, suprathreshold features or for conjunctions of features. Here we demonstrate that it is possible to retain information about only four colours or orientations in visual working memory at one time. However, it is also possible to retain both the colour and the orientation of four objects, indicating that visual working memory stores integrated objects rather than individual features. Indeed, objects defined by a conjunction of four features can be retained in working memory just as well as single-feature objects, allowing sixteen individual features to be retained when distributed across four objects. Thus, the capacity of visual working memory must be understood in terms of integrated objects rather than individual features, which places significant constraints on cognitive and neurobiological models of the temporary storage of visual information* (Luck & Vogel, 1997, p.1).
 
+
+Original [paper](https://github.com/neuropacabra/LuckVogel/raw/doc/Luck%20%26%20Vogel.pdf)
+
 ## Paradigm setup
 Paradigm is fully implemented into [OpenSesame](http://www.cogsci.nl) in Python 2.7 working and tested under Windows 7 SP2 64-bit and macOS 10.12.4.
 
