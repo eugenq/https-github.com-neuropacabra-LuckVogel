@@ -4485,6 +4485,37 @@ define sketchpad retention
 	set duration 900
 	set description "Displays stimuli"
 
+define inline_script tag_response
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	import socket
+	
+	try:
+		starstim = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		starstim.connect(('localhost', 1234))
+		if var.correct == 1:
+			starstim.send("<TRIGGER>" + str(var.nBoxes + 10) + "</TRIGGER>")
+		else:
+			starstim.send("<TRIGGER>" + str(var.nBoxes + 20) + "</TRIGGER>")
+	except:
+		print 'Cannot connect to EEG system, please restart recording!'
+	__end__
+
+define inline_script tag_target
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	import socket
+	
+	try:
+		starstim = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		starstim.connect(('localhost', 1234))
+		starstim.send("<TRIGGER>" + str(var.nBoxes) + "</TRIGGER>")
+	except:
+		print 'Cannot connect to EEG system, please restart recording!'
+	__end__
+
 define sketchpad target
 	set duration 1000
 	set description "Displays stimuli"
@@ -4516,8 +4547,10 @@ define sequence trial_sequence
 	run fixation always
 	run cue always
 	run retention always
+	run tag_target always
 	run target always
 	run response always
 	run mouse always
+	run tag_response always
 	run logfile always
 
