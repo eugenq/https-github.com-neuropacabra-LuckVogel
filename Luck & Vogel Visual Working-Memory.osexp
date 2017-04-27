@@ -4446,7 +4446,7 @@ define loop experimental_loop
 	run trial_sequence
 
 define sketchpad fixation
-	set duration "[ISI]"
+	set duration 400
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
 
@@ -4454,14 +4454,6 @@ define sketchpad instructions
 	set duration 0
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[CONNECTED] == \"yes\"" text="Hello!<br /><br />Thank you for participation in <br />cognitive boosting experiment by <br />electrical stimulation.<br /><br />Feel free to ask any questions <br />before experiment starts. After then <br />try to prevent excesive blinking or<br /> swallowing and chewing.<br /><br />At next sequence you will <br />try experiment in three <br />trials.<br /><br />Press left mouse button to continue." x=0 y=0 z_index=0
-
-define inline_script isi
-	set description "Executes Python code"
-	set _run ""
-	___prepare__
-	import random
-	var.ISI = random.randint(1500, 2000)
-	__end__
 
 define logger logfile
 	set description "Logs experimental data"
@@ -4494,7 +4486,7 @@ define sketchpad retention
 	set description "Displays stimuli"
 
 define sketchpad target
-	set duration 1700
+	set duration 1000
 	set description "Displays stimuli"
 	draw rect color="[c1b]" fill=1 h=64 penwidth=1 show_if="[nBoxes]==3" w=64 x="[x1]" y="[y1]" z_index=0
 	draw rect color="[c2b]" fill=1 h=64 penwidth=1 show_if="[nBoxes]==3" w=64 x="[x2]" y="[y2]" z_index=0
@@ -4521,7 +4513,6 @@ define sketchpad target
 define sequence trial_sequence
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
-	run isi always
 	run fixation always
 	run cue always
 	run retention always
