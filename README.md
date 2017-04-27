@@ -111,3 +111,26 @@ In offline analysis these numbers become:
 | Box 2 screen with 6 boxes incorrect asnwer | 26           |
 | Box 2 screen with 8 boxes correct asnwer   | 18           |
 | Box 2 screen with 8 boxes incorrect asnwer | 28           |
+
+
+### Tagging system
+
+EEG tag for StarStim is based on `socket` Python 2.7.12 module.
+
+Full implementation of sending correct/incorrect tag is followings:
+
+```python
+import socket
+
+try:
+	starstim = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	starstim.connect(('localhost', 1234))
+	if var.correct == 1:
+		starstim.send("<TRIGGER>" + str(var.nBoxes + 10) + "</TRIGGER>")
+	else:
+		starstim.send("<TRIGGER>" + str(var.nBoxes + 20) + "</TRIGGER>")
+except:
+	print 'Cannot connect to EEG system, please restart recording!'
+```
+
+If is not conencted from some reason to EEG paradigm displays red font warining screen and shuts down the experiment before its start to prvent no tagged EEG recording.
