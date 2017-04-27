@@ -1,7 +1,7 @@
 ---
 API: 2
 OpenSesame: 3.1.6
-Platform: posix
+Platform: nt
 ---
 set width 1920
 set uniform_coordinates yes
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/Users/michael/Documents/GitHub/LuckVogel"
+set experiment_path "C:\\Users\\Michael\\Documents\\GitHub\\LuckVogel"
 set disable_garbage_collection yes
 set description "tDCS and tACS paradigm with EEG in cognitive boost by short term stimulation"
 set coordinates uniform
@@ -43,14 +43,22 @@ define inline_script connect_eeg
 	___prepare__
 	import socket
 	
-	var.isConnected = False
+	var.isConnected = "no"
 	try:
 		starstim = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		starstim.connect(('localhost', 1234))
-		isConnected = True
+		var.isConnected = "yes"
 	except:
 		print 'Cannot connect to EEG system, please restart recording!'
 	__end__
+
+define mouse_response continue_inst
+	set timeout infinite
+	set show_cursor no
+	set flush yes
+	set duration mouseclick
+	set description "Collects mouse responses"
+	set allowed_responses 1
 
 define sketchpad cue
 	set duration 100
@@ -77,12 +85,22 @@ define sketchpad cue
 	draw rect color="[c7a]" fill=1 h=64 penwidth=1 show_if="[nBoxes]==8" w=64 x="[x7]" y="[y7]" z_index=0
 	draw rect color="[c8a]" fill=1 h=64 penwidth=1 show_if="[nBoxes]==8" w=64 x="[x8]" y="[y8]" z_index=0
 
+define sketchpad eeg_fail
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color="#fc0006" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[isConnected] = 'False'" text="Error!<br /><br />EEG is not connected. Please<br />restart computer and recording.<br /><br /><br /><br />For continue press any keyboard." x=0 y=0 z_index=0
+
+define sketchpad eeg_success
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[isConnected] = 'True'" text="Success!<br /><br />EEG is connected.<br /><br /><br /><br />For continue press any keyboard." x=0 y=0 z_index=0
+
 define sequence eeg_sync
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
 	run connect_eeg always
-	run success always
-	run fail always
+	run eeg_success "[isConnected] = \"yes\""
+	run eeg_fail "[isConnected] = \"no\""
 
 define sketchpad ending
 	set duration keypress
@@ -94,6 +112,7 @@ define sequence experiment
 	set description "Runs a number of items in sequence"
 	run eeg_sync always
 	run instructions always
+	run continue_inst always
 	run experimental_loop always
 	run ending always
 
@@ -4429,18 +4448,13 @@ define loop experimental_loop
 	setcycle 119 correctAnswer 1
 	run trial_sequence
 
-define sketchpad fail
-	set duration keypress
-	set description "Displays stimuli"
-	draw textline center=1 color="#fc0006" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[isConnected] = 'False'" text="Error!<br /><br />EEG is not connected. Please<br />restart computer and recording.<br /><br /><br /><br />For continue press any keyboard." x=0 y=0 z_index=0
-
 define sketchpad fixation
 	set duration "[ISI]"
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
 
 define sketchpad instructions
-	set duration keypress
+	set duration 0
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="Hello!<br /><br />Thank you for participation in <br />cognitive boosting experiment by <br />electrical stimulation.<br /><br />Feel free to ask any questions <br />before experiment starts. After then <br />try to prevent excesive blinking or<br /> swallowing and chewing.<br /><br />At next sequence you will <br />try experiment in three <br />trials.<br /><br />Press left mouse button to continue." x=0 y=0 z_index=0
 
@@ -4476,11 +4490,6 @@ define sketchpad response
 define sketchpad retention
 	set duration 900
 	set description "Displays stimuli"
-
-define sketchpad success
-	set duration keypress
-	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[isConnected] = 'True'" text="Success!<br /><br />EEG is connected.<br /><br /><br /><br />For continue press any keyboard." x=0 y=0 z_index=0
 
 define sketchpad target
 	set duration 1700
