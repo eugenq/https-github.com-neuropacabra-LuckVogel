@@ -43,13 +43,15 @@ define inline_script connect_eeg
 	___prepare__
 	import socket
 	
-	var.isConnected = "no"
+	var.CONNECTED = False
 	try:
 		starstim = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		starstim.connect(('localhost', 1234))
-		var.isConnected = "yes"
+		var.CONNECTED = True
 	except:
 		print 'Cannot connect to EEG system, please restart recording!'
+	
+	var.CONNECTED = True
 	__end__
 
 define mouse_response continue_inst
@@ -86,21 +88,14 @@ define sketchpad cue
 	draw rect color="[c8a]" fill=1 h=64 penwidth=1 show_if="[nBoxes]==8" w=64 x="[x8]" y="[y8]" z_index=0
 
 define sketchpad eeg_fail
-	set duration keypress
+	set duration 3000
 	set description "Displays stimuli"
-	draw textline center=1 color="#fc0006" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[isConnected] = 'False'" text="Error!<br /><br />EEG is not connected. Please<br />restart computer and recording.<br /><br /><br /><br />For continue press any keyboard." x=0 y=0 z_index=0
+	draw textline center=1 color="#fc0006" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[CONNECTED] == \"no\"" text="Error!<br /><br />EEG is not connected. Please<br />restart computer and recording." x=0 y=0 z_index=0
 
 define sketchpad eeg_success
-	set duration keypress
+	set duration 3000
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[isConnected] = 'True'" text="Success!<br /><br />EEG is connected.<br /><br /><br /><br />For continue press any keyboard." x=0 y=0 z_index=0
-
-define sequence eeg_sync
-	set flush_keyboard yes
-	set description "Runs a number of items in sequence"
-	run connect_eeg always
-	run eeg_success "[isConnected] = \"yes\""
-	run eeg_fail "[isConnected] = \"no\""
+	draw textline center=1 color="#00ff00" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[CONNECTED] == \"yes\"" text="Success!<br /><br />EEG is connected." x=0 y=0 z_index=0
 
 define sketchpad ending
 	set duration keypress
@@ -110,10 +105,12 @@ define sketchpad ending
 define sequence experiment
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
-	run eeg_sync always
+	run connect_eeg always
+	run eeg_fail always
+	run eeg_success always
 	run instructions always
 	run continue_inst always
-	run experimental_loop always
+	run main always
 	run ending always
 
 define loop experimental_loop
@@ -4456,7 +4453,7 @@ define sketchpad fixation
 define sketchpad instructions
 	set duration 0
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="Hello!<br /><br />Thank you for participation in <br />cognitive boosting experiment by <br />electrical stimulation.<br /><br />Feel free to ask any questions <br />before experiment starts. After then <br />try to prevent excesive blinking or<br /> swallowing and chewing.<br /><br />At next sequence you will <br />try experiment in three <br />trials.<br /><br />Press left mouse button to continue." x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if="[CONNECTED] == \"yes\"" text="Hello!<br /><br />Thank you for participation in <br />cognitive boosting experiment by <br />electrical stimulation.<br /><br />Feel free to ask any questions <br />before experiment starts. After then <br />try to prevent excesive blinking or<br /> swallowing and chewing.<br /><br />At next sequence you will <br />try experiment in three <br />trials.<br /><br />Press left mouse button to continue." x=0 y=0 z_index=0
 
 define inline_script isi
 	set description "Executes Python code"
@@ -4469,6 +4466,11 @@ define inline_script isi
 define logger logfile
 	set description "Logs experimental data"
 	set auto_log yes
+
+define sequence main
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run experimental_loop "[CONNECTED] == \"yes\""
 
 define mouse_response mouse
 	set timeout infinite
