@@ -68,7 +68,46 @@ This is a sample [logfile](https://github.com/neuropacabra/LuckVogel/raw/doc/Sam
 ### Response collection
 It is collected only mouse pressed coded as `LMB = 1` and `RMB = 3` in the way of correctness in logfile which is automaticaly generated.
 
+## Timing
 
-box 1 = 100
-retention = 900
-box 2 = 1000
+Each trial consists of intial cue image where some boxes appears (3, 4, 6 and 8) wich some pre-defined colors. After that there is retention screen which tends to minimize visual processing from intial cue and led participant to "forget" previous stimulation in term of short-term visual memory. Then it goes a second stimulation screen which presents a stimulation screen with the same layout and number of boxes but in 50% of all occurance it chanches one box color.
+
+After stimulation participant is asked if it was or if it was not different - fisrt stimulation vs second stimulation. Then blank screen before next trial is presented.
+
+| Screen    | Description                 | Duration (ms) | EEG tag | Experiment dur |
+|-----------|-----------------------------|---------------|---------|----------------|
+| Box 1     | Intial cue                  | 100           | No      | 12 000 ms      |
+| Retention | Retention screen - blank    | 900           | No      | 108 000 ms     |
+| Box 2     | Target stimulation - tagged | 1000          | Yes     | 120 000 ms     |
+| Answer    | Answering screen - response | Unlimited     | Yes     | Aprox 120 000 ms|
+| Blank     | Inter stimulus interval     | 400           | No      | 48 000 ms      |
+
+This is optimal event-related study timing due to study needs, e.g. as short as possbile. It takes in total 6,8 minutes (408 000 ms). You can see weight in total experiment duration in collumn Experiment dur in table above.
+
+## Tagging
+
+It is tagged only Box 2 screen and it is followring response (Answer screen). In offline analysis it will be used correctness and coded it into Box 2 screen. It means that is participant answers on 4 boxes and EEG got tag int 4, then when participant was correct it will be 14 (+10) or if wrong it will become 24 (+20).
+
+For better undertanding it will be at the final stage of analysis transferend into human readable strings.
+
+| Event                     | Tag integer |
+|---------------------------|-------------|
+| Box 2 screen with 3 boxes | 3           |
+| Box 2 screen with 4 boxes | 4           |
+| Box 2 screen with 5 boxes | 5           |
+| Box 2 screen with 6 boxes | 6           |
+| Correct answer            | 10          |
+| Incorrect answer          | 20          |
+
+In offline analysis these numbers become:
+
+| Event                                      | Tag integer  |
+|--------------------------------------------|--------------|
+| Box 2 screen with 3 boxes correct asnwer   | 13           |
+| Box 2 screen with 3 boxes incorrect asnwer | 23           |
+| Box 2 screen with 4 boxes correct asnwer   | 14           |
+| Box 2 screen with 4 boxes incorrect asnwer | 24           |
+| Box 2 screen with 6 boxes correct asnwer   | 16           |
+| Box 2 screen with 6 boxes incorrect asnwer | 26           |
+| Box 2 screen with 8 boxes correct asnwer   | 18           |
+| Box 2 screen with 8 boxes incorrect asnwer | 28           |
